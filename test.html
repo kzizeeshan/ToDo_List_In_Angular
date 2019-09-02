@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html>
+<script src="https://ajax.googleapis.com/ajax/libs/angularjs/1.6.4/angular.min.js"></script>
+<script src="angular.js"></script>
+
+  <style>
+         table, th , td {
+            border: 1px solid black;
+            border-collapse: collapse;
+            padding: 5px;
+         }
+         
+         table tr:nth-child(odd) {
+            background-color: grey;
+         }
+         
+         table tr:nth-child(even) {
+            background-color: skyblue;
+         }
+      </style>
+      <fieldset>
+
+<body>
+
+<div ng-app="myApp" ng-controller="myCtrl"> 
+   <h1>Angular js Application</h1>
+
+<form>
+   <fieldset>
+
+   <label>TITLE:</label>
+  <input type="text" name="title" ng-model="titleName"><br>
+  <label>URL:</label>
+  <input type="text" name="url" ng-model="urlName"><br>
+
+  <button ng-show="add" ng-click=addItem()>Add</button> 
+  <div ng-show="update">
+  <button  ng-click="updateData(dataToEdit)">Update</button>
+  <button  ng-click="dataEdit(false)">Cancel</button>
+</div>
+  </fieldset>
+  </form>
+  <hr/>
+
+ <table>
+        <thead>
+            <tr>
+                
+                <th>Title</th>
+                <th>url</th>
+                
+            </tr>
+        </thead>
+        <tbody>
+          <tr ng-repeat="x in myarr">
+               
+                <td>{{x.title}}</td>
+                <td>{{x.url}}</td>
+                 <td><button style="color: blue" ng-click="edit(x)">Edit</button></td>
+
+                <td><button style="color: red" ng-click="removeItem(x)">Remove</button></td>
+               
+            </tr>
+        </tbody>
+    </table>
+
+</div>
+
+<hr/>
+<script>
+
+var app = angular.module('myApp', []);
+
+app.controller('myCtrl', function($scope, $http) {
+
+$scope.update=false;
+$scope.add=true;
+
+$scope.dataload=function(){
+$http.get("http://gentle-coast-86971.herokuapp.com/movie")
+  .then(function(response) {
+     
+      console.log(response.data);
+      $scope.myarr = response.data;
+     
+  });
+
+}
+ $scope.dataload();
+   $scope.addItem = function () {
+      
+      alert('Data is post');
+      console.log($scope.titleName);
+      console.log($scope.urlName);
+
+      var postdata = {title:$scope.titleName,url:$scope.urlName}
+
+       $http.post("http://gentle-coast-86971.herokuapp.com/movie",postdata)
+        .then(function(response) {
+            console.log(response.data);
+            $scope.myarr = data;
+          
+         
+        });
+         $scope.dataload();
+}
+$scope.dataEdit = function(flag) {
+            $scope.update = flag;
+         }
+$scope.dataAdd = function(flag) {
+            $scope.add = flag;
+         }
+
+    $scope.edit=function(x){
+         $scope.update=true;
+         $scope.add=false;
+         $scope.dataToEdit=angular.copy(x);
+         
+         $scope.titleName=$scope.dataToEdit.title;
+         $scope.urlName=$scope.dataToEdit.url;
+
+         console.log($scope.dataToEdit);
+         console.log($scope.titleName);
+         console.log($scope.urlName);
+         
+      }
+
+ $scope.updateData = function (dataToEdit) {
+             var id = dataToEdit._id;
+             console.log(id);
+             var dataToUpdate = {title:$scope.titleName,url:$scope.urlName};
+            $http.put("http://gentle-coast-86971.herokuapp.com/movie"+"/"+id,dataToUpdate)
+               .then(function(data) {
+               
+                  console.log(dataToUpdate);
+                 $scope.dataload();
+               });
+                
+         }
+
+         $scope.removeItem = function (x) {
+             var id = x._id;
+             console.log(id);
+            $http.delete("http://gentle-coast-86971.herokuapp.com/movie"+"/"+id)
+               .then(function(data) {
+                  $scope.dataload();
+               });
+               
+         }
+});
+
+</script>
+
+
+</body>
+</html>

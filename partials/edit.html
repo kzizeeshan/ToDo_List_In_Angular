@@ -1,0 +1,14 @@
+
+
+<div>
+	<h1>Edit Data</h1>
+	<form>
+
+		<label> Title:</label>
+		<input type="text" ng-model="dataToEdit.title"> </br>
+		<label>url:</label>
+		<input type="text" ng-model="dataToEdit.url"></br>
+		<button ng-click="updateData(dataToEdit)">Update</button>
+		<button ng-click="dataEdit(false)">Cancel</button>
+	</form>
+</div>
